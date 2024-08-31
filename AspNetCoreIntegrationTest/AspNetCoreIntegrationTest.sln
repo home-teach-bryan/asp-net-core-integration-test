@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreIntegration", "AspNetCoreIntegration\AspNetCoreIntegration.csproj", "{B482D516-CB65-403B-AFBF-8C972C1D7B23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreIntegrationTests", "AspNetCoreIntegrationTests\AspNetCoreIntegrationTests.csproj", "{751C7CF5-D4FB-4D59-AAA6-8E7894A4DFBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{B482D516-CB65-403B-AFBF-8C972C1D7B23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B482D516-CB65-403B-AFBF-8C972C1D7B23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B482D516-CB65-403B-AFBF-8C972C1D7B23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{751C7CF5-D4FB-4D59-AAA6-8E7894A4DFBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{751C7CF5-D4FB-4D59-AAA6-8E7894A4DFBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{751C7CF5-D4FB-4D59-AAA6-8E7894A4DFBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{751C7CF5-D4FB-4D59-AAA6-8E7894A4DFBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
