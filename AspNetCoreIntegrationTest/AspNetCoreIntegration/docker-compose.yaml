@@ -1,0 +1,13 @@
+name: asp-net-core-integration-test
+
+services:
+  local-sql-server:
+    hostname: local-host-sql
+    container_name: local-sql-server
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Aa123456
+    
