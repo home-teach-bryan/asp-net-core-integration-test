@@ -30,6 +30,7 @@ public class TestSetup
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
         await dbContext.Database.MigrateAsync();
+        await SeedData();
     }
 
     [OneTimeTearDown]
@@ -37,6 +38,35 @@ public class TestSetup
     {
         await DbContainer.DisposeAsync();
         await Factory.DisposeAsync();
+    }
+
+    private async Task SeedData()
+    {
+        using var scope = Factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
+
+        var admin = new User
+        {
+            Name = "Admin",
+            Password = BCrypt.Net.BCrypt.HashPassword("Admin"),
+            Roles = new string[] { "Admin" },
+            Created = DateTime.Now,
+            Updated = DateTime.Now,
+        };
+        
+        var user = new User
+        {
+            Name = "User",
+            Password = BCrypt.Net.BCrypt.HashPassword("User"),
+            Roles = new string[] { "User" },
+            Created = DateTime.Now,
+            Updated = DateTime.Now,
+        };
+        
+        dbContext.Users.Add(admin);
+        dbContext.Users.Add(user);
+        await dbContext.SaveChangesAsync();
+
     }
 
 }

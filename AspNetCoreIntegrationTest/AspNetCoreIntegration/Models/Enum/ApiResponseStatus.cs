@@ -4,7 +4,6 @@ namespace AspNetCoreIntegration.Models.Enum;
 
 public enum ApiResponseStatus
 {
-    
     /// <summary>
     /// 新增使用者失敗
     /// </summary>

@@ -1,7 +1,8 @@
 ﻿using System.Net.Http.Json;
-using AspNetCoreIntegration;
+using System.Text.Json;
+using AspNetCoreIntegration.Models.Enum;
 using AspNetCoreIntegration.Models.Request;
-using AspNetCoreIntegrationTests.Factory;
+using AspNetCoreIntegration.Models.Response;
 using FluentAssertions;
 
 namespace AspNetCoreIntegrationTests.Tests;
@@ -19,7 +20,7 @@ public class UserControllerTests
     }
 
     [Test]
-    public async Task User_AddUser_ReturnSuccess()
+    public async Task User_AddNonExistUser_ReturnSuccess()
     {
         // arrange
         var addUserRequest = new AddUserRequest
@@ -32,6 +33,25 @@ public class UserControllerTests
         var response = await _client.PostAsJsonAsync(this._baseUrl, addUserRequest);
         // assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        
+    }
+
+    [Test]
+    public async Task User_AddExistUser_ReturnFail()
+    {
+        // arrange
+        var addUserRequest = new AddUserRequest
+        {
+            Name = "Admin",
+            Password = "Admin",
+            Roles = new string[] { "Admin" }
+        };
+        // act
+        var response = await _client.PostAsJsonAsync(this._baseUrl, addUserRequest);
+        // assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        var result = await response.Content.ReadFromJsonAsync<ApiResponse<object>>();
+        result.Status.Should().Be(ApiResponseStatus.AddUserFail);
     }
 
     [TearDown]
