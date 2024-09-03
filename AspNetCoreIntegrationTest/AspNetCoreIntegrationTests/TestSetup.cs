@@ -62,9 +62,19 @@ public class TestSetup
             Created = DateTime.Now,
             Updated = DateTime.Now,
         };
+
+        var superAdmin = new User
+        {
+            Name = "SuperAdmin",
+            Password = BCrypt.Net.BCrypt.HashPassword("SuperAdmin"),
+            Roles = new string[] { "Admin", "User" },
+            Created = DateTime.Now,
+            Updated = DateTime.Now,
+        };
         
         dbContext.Users.Add(admin);
         dbContext.Users.Add(user);
+        dbContext.Users.Add(superAdmin);
         await dbContext.SaveChangesAsync();
 
     }
