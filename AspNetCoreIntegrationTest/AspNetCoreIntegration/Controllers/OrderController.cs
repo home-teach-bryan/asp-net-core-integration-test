@@ -7,7 +7,7 @@ using AspNetCoreIntegrationTest.Models.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreIntegrationTest.Controllers;
+namespace AspNetCoreIntegration.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

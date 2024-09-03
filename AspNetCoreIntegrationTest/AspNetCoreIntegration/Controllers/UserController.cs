@@ -2,10 +2,9 @@
 using AspNetCoreIntegration.Models.Request;
 using AspNetCoreIntegration.Models.Response;
 using AspNetCoreIntegration.Services;
-using AspNetCoreIntegrationTest.Models.Response;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreIntegrationTest.Controllers;
+namespace AspNetCoreIntegration.Controllers;
 
 /// <summary>
 /// 使用者控制器

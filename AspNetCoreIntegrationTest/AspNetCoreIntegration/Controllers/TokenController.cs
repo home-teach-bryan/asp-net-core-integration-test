@@ -4,11 +4,10 @@ using AspNetCoreIntegration.Models.Enum;
 using AspNetCoreIntegration.Models.Request;
 using AspNetCoreIntegration.Models.Response;
 using AspNetCoreIntegration.Services;
-using AspNetCoreIntegrationTest.Models.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreIntegrationTest.Controllers;
+namespace AspNetCoreIntegration.Controllers;
 
 /// <summary>
 /// 取得 Token

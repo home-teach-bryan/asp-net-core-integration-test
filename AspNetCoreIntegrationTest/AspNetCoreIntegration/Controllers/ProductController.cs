@@ -2,11 +2,10 @@
 using AspNetCoreIntegration.Models.Request;
 using AspNetCoreIntegration.Models.Response;
 using AspNetCoreIntegration.Services;
-using AspNetCoreIntegrationTest.Models.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreIntegrationTest.Controllers;
+namespace AspNetCoreIntegration.Controllers;
 
 /// <summary>
 /// 產品控制器
