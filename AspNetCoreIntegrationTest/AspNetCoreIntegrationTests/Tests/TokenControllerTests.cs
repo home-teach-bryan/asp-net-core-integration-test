@@ -10,7 +10,7 @@ namespace AspNetCoreIntegrationTests.Tests;
 public class TokenControllerTests
 {
     private HttpClient _client;
-    private string _baseUrl = "api/token";
+    private string _tokenEndpoint = "api/token";
     
     [SetUp]
     public void SetUp()
@@ -29,7 +29,7 @@ public class TokenControllerTests
             Password = password
         };
         // act
-        var response = await _client.PostAsJsonAsync(_baseUrl, getTokenRequest);
+        var response = await _client.PostAsJsonAsync(_tokenEndpoint, getTokenRequest);
         // assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         var result = await response.Content.ReadFromJsonAsync<ApiResponse<string>>();
@@ -47,7 +47,7 @@ public class TokenControllerTests
             Password = "UserA"
         };
         // act
-        var response = await _client.PostAsJsonAsync(_baseUrl, getTokenRequest);
+        var response = await _client.PostAsJsonAsync(_tokenEndpoint, getTokenRequest);
         // assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         var result = await response.Content.ReadFromJsonAsync<ApiResponse<string>>();
@@ -68,7 +68,7 @@ public class TokenControllerTests
         };
         
         // act for token
-        var response = await _client.PostAsJsonAsync(_baseUrl, getTokenRequest);
+        var response = await _client.PostAsJsonAsync(_tokenEndpoint, getTokenRequest);
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         var getTokenResult = await response.Content.ReadFromJsonAsync<ApiResponse<string>>();
         
@@ -80,7 +80,7 @@ public class TokenControllerTests
         var token = getTokenResult.Data;
         _client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {token}");
         // act for get roles
-        var getRolesResult = await _client.GetFromJsonAsync<ApiResponse<string[]>>($"{this._baseUrl}/Roles");
+        var getRolesResult = await _client.GetFromJsonAsync<ApiResponse<string[]>>($"{this._tokenEndpoint}/Roles");
         
         // assert for get roles
         getRolesResult.Status.Should().Be(ApiResponseStatus.Success);

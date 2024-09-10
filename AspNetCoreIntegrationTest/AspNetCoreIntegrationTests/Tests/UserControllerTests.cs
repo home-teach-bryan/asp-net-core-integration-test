@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Json;
-using System.Text.Json;
 using AspNetCoreIntegration.Models.Enum;
 using AspNetCoreIntegration.Models.Request;
 using AspNetCoreIntegration.Models.Response;
@@ -11,7 +10,7 @@ namespace AspNetCoreIntegrationTests.Tests;
 public class UserControllerTests
 {
     private HttpClient _client;
-    private string _baseUrl = "api/user";
+    private string _userEndpoint = "api/user";
 
     [SetUp]
     public void SetUp()
@@ -30,7 +29,7 @@ public class UserControllerTests
             Roles = new string[] { "Admin" }
         };
         // act
-        var response = await _client.PostAsJsonAsync(this._baseUrl, addUserRequest);
+        var response = await _client.PostAsJsonAsync(this._userEndpoint, addUserRequest);
         // assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         
@@ -47,7 +46,7 @@ public class UserControllerTests
             Roles = new string[] { "Admin" }
         };
         // act
-        var response = await _client.PostAsJsonAsync(this._baseUrl, addUserRequest);
+        var response = await _client.PostAsJsonAsync(this._userEndpoint, addUserRequest);
         // assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         var result = await response.Content.ReadFromJsonAsync<ApiResponse<object>>();
