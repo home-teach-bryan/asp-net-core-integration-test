@@ -1,12 +1,11 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using System.Runtime.InteropServices;
 using AspNetCoreIntegration.Models.Enum;
 using AspNetCoreIntegration.Models.Request;
 using AspNetCoreIntegration.Models.Response;
+using AspNetCoreIntegrationTest.Models.Response;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using NUnit.Framework.Internal;
 
 namespace AspNetCoreIntegrationTests.Tests;
 
@@ -28,10 +27,10 @@ public class ProductControllerTests
         _client.Dispose();
     }
 
-    [TestCase("Admin", "Admin", "測試案例產品1", StatusCodes.Status200OK, ApiResponseStatus.Success)]
-    [TestCase("SuperAdmin", "SuperAdmin", "測試案例產品2", StatusCodes.Status200OK, ApiResponseStatus.Success)]
+    [TestCase("Admin", "Admin", "測試案例產品1")]
+    [TestCase("SuperAdmin", "SuperAdmin", "測試案例產品2")]
     public async Task Product_AdminRole_AddNonExistProduct_ReturnSuccess(string name, string password,
-        string productName, int httpStatusCode, ApiResponseStatus apiResponseStatus)
+        string productName)
     {
         // arrange
         _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
@@ -45,12 +44,12 @@ public class ProductControllerTests
         var response = await _client.PostAsJsonAsync(_productEndpoint, addProductRequest);
         var result = await response.Content.ReadFromJsonAsync<ApiResponse<object>>();
         // assert
-        response.StatusCode.Should().Be((HttpStatusCode)httpStatusCode);
-        result.Status.Should().Be(apiResponseStatus);
+        response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
+        result.Status.Should().Be(ApiResponseStatus.Success);
     }
 
-    [TestCase("User", "User", StatusCodes.Status403Forbidden)]
-    public async Task Product_UserRole_AddNonExistProduct_ReturnFail(string name, string password, int httpStatusCode)
+    [TestCase("User", "User")]
+    public async Task Product_UserRole_AddNonExistProduct_ReturnFail(string name, string password)
     {
         // arrange
         _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
@@ -63,12 +62,11 @@ public class ProductControllerTests
         // act
         var response = await _client.PostAsJsonAsync(_productEndpoint, addProductRequest);
         // assert
-        response.StatusCode.Should().Be((HttpStatusCode)httpStatusCode);
+        response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status403Forbidden);
     }
 
-    [TestCase("Admin", "Admin", StatusCodes.Status400BadRequest)]
-    public async Task Product_AddNotExistProduct_WithFieldValidation_ReturnBadRequest(string name, string password,
-        int httpStatusCode)
+    [TestCase("Admin", "Admin")]
+    public async Task Product_AddNotExistProduct_WithFieldValidation_ReturnBadRequest(string name, string password)
     {
         // arrange
         _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
@@ -77,40 +75,38 @@ public class ProductControllerTests
             Price = 100,
             Quantity = 10
         };
-
         // act
         var result = await _client.PostAsJsonAsync(_productEndpoint, addProductRequest);
         // assert
-        result.StatusCode.Should().Be((HttpStatusCode)httpStatusCode);
+        result.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status400BadRequest);
     }
 
-    [TestCase("Admin", "Admin", StatusCodes.Status400BadRequest)]
-    public async Task Product_AddExistProduct_ReturnFail(string name, string password, int httpStatusCode)
+    [TestCase("Admin", "Admin")]
+    public async Task Product_AddExistProduct_ReturnFail(string name, string password)
     {
         // arrange
         _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
         var addProductRequest = new AddProductRequest
         {
-            Name = "更新產品1",
+            Name = "產品1",
             Price = 100,
             Quantity = 1
         };
         // act
         var result = await _client.PostAsJsonAsync(_productEndpoint, addProductRequest);
         // assert
-        result.StatusCode.Should().Be((HttpStatusCode)httpStatusCode);
+        result.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status400BadRequest);
     }
 
-    [TestCase("Admin", "Admin", "產品1", StatusCodes.Status200OK, ApiResponseStatus.Success)]
-    [TestCase("SuperAdmin", "SuperAdmin", "產品1", StatusCodes.Status200OK, ApiResponseStatus.Success)]
-    public async Task Product_AdminRole_UpdateExistProduct_ReturnSuccess(string name, string password,
-        string productName, int httpStatusCode, ApiResponseStatus apiResponseStatus)
+    [TestCase("Admin", "Admin")]
+    [TestCase("SuperAdmin", "SuperAdmin")]
+    public async Task Product_AdminRole_UpdateExistProduct_ReturnSuccess(string name, string password)
     {
         
         var productIdMap = new Dictionary<string, string>
         {
-            ["Admin"] = TestSetup.UpdateProductId1,
-            ["SuperAdmin"] = TestSetup.UpdateProductId2,
+            ["Admin"] = TestSetup.ExistProductId1,
+            ["SuperAdmin"] = TestSetup.ExistProductId2,
         };
         
         productIdMap.TryGetValue(name, out var productId);
@@ -119,7 +115,7 @@ public class ProductControllerTests
         _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
         var updateProductRequest = new UpdateProductRequest
         {
-            Name = productName,
+            Name = "更新產品名稱",
             Price = 1,
             Quantity = 1
         };
@@ -128,32 +124,30 @@ public class ProductControllerTests
             await _client.PutAsJsonAsync($"{_productEndpoint}/{productId}", updateProductRequest);
         var result = await response.Content.ReadFromJsonAsync<ApiResponse<object>>();
         // assert
-        response.StatusCode.Should().Be((HttpStatusCode)httpStatusCode);
-        result.Status.Should().Be(apiResponseStatus);
+        response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
+        result.Status.Should().Be(ApiResponseStatus.Success);
     }
 
-    [TestCase("User", "User", "產品1", StatusCodes.Status403Forbidden)]
-    public async Task Product_UserRole_UpdateExistProduct_ReturnFail(string name, string password, string productName,
-        int httpStatusCode)
+    [TestCase("User", "User")]
+    public async Task Product_UserRole_UpdateExistProduct_ReturnFail(string name, string password)
     {
         // arrange
         _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
         var updateProductRequest = new UpdateProductRequest
         {
-            Name = productName,
+            Name = "更新產品名稱",
             Price = 1,
             Quantity = 1
         };
         // act
         var response =
-            await _client.PutAsJsonAsync($"{_productEndpoint}/{TestSetup.UpdateProductId1}", updateProductRequest);
+            await _client.PutAsJsonAsync($"{_productEndpoint}/{TestSetup.ExistProductId1}", updateProductRequest);
         // assert
-        response.StatusCode.Should().Be((HttpStatusCode)httpStatusCode);
+        response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status403Forbidden);
     }
 
-    [TestCase("Admin", "Admin", StatusCodes.Status400BadRequest, ApiResponseStatus.Fail)]
-    public async Task Product_UpdateNotExistProduct_ReturnFail(string name, string password, int httpStatusCode,
-        ApiResponseStatus apiResponseStatus)
+    [TestCase("Admin", "Admin")]
+    public async Task Product_UpdateNotExistProduct_ReturnFail(string name, string password)
     {
         // arrange
         _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
@@ -166,15 +160,13 @@ public class ProductControllerTests
         // act
         var response = await _client.PutAsJsonAsync($"{_productEndpoint}/{Guid.NewGuid()}", updateProductRequest);
         // assert
-        response.StatusCode.Should().Be((HttpStatusCode)httpStatusCode);
+        response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status400BadRequest);
         var result = await response.Content.ReadFromJsonAsync<ApiResponse<object>>();
-        result.Status.Should().Be(apiResponseStatus);
+        result.Status.Should().Be(ApiResponseStatus.Fail);
     }
 
-    [TestCase("Admin", "Admin", "產品1", StatusCodes.Status400BadRequest, ApiResponseStatus.Fail)]
-    public async Task Product_UpdateExistProduct_WithFieldValidation_ReturnFail(string name, string password,
-        string productName,
-        int httpStatusCode, ApiResponseStatus apiResponseStatus)
+    [TestCase("Admin", "Admin")]
+    public async Task Product_UpdateExistProduct_WithFieldValidation_ReturnFail(string name, string password)
     {
         // arrange
         _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
@@ -185,15 +177,14 @@ public class ProductControllerTests
         };
         // act
         var response =
-            await _client.PutAsJsonAsync($"{_productEndpoint}/{TestSetup.UpdateProductId1}", updateProductRequest);
+            await _client.PutAsJsonAsync($"{_productEndpoint}/{TestSetup.ExistProductId1}", updateProductRequest);
         // assert
-        response.StatusCode.Should().Be((HttpStatusCode)httpStatusCode);
+        response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status400BadRequest);
     }
 
-    [TestCase("Admin", "Admin", StatusCodes.Status200OK)]
-    [TestCase("SuperAdmin", "SuperAdmin", StatusCodes.Status200OK)]
-    public async Task Product_AdminRole_DeleteExistProduct_ReturnSuccess(string name, string password,
-        int httpStatusCode)
+    [TestCase("Admin", "Admin")]
+    [TestCase("SuperAdmin", "SuperAdmin")]
+    public async Task Product_AdminRole_DeleteExistProduct_ReturnSuccess(string name, string password)
     {
         var productIdMap = new Dictionary<string, string>
         {
@@ -208,30 +199,83 @@ public class ProductControllerTests
         // act
         var response = await _client.DeleteAsync($"{_productEndpoint}/{productId}");
         // assert
-        response.StatusCode.Should().Be((HttpStatusCode)httpStatusCode);
+        response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
     }
 
-    [TestCase("User", "User", StatusCodes.Status403Forbidden)]
-    public async Task Product_UserRole_DeleteExistProduct_ReturnFail(string name, string password, int httpStatusCode)
+    [TestCase("User", "User")]
+    public async Task Product_UserRole_DeleteExistProduct_ReturnFail(string name, string password)
     {
         // arrange
         _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
         // act
         var response = await _client.DeleteAsync($"{_productEndpoint}/{TestSetup.DeleteProductId1}");
         // assert
-        response.StatusCode.Should().Be((HttpStatusCode)httpStatusCode);
+        response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status403Forbidden);
     }
 
-    [TestCase("Admin", "Admin", StatusCodes.Status400BadRequest)]
-    public async Task Product_DeleteNotExistProduct_ReturnBadRequest(string name, string password,
-        int httpStatusCode)
+    [TestCase("Admin", "Admin")]
+    public async Task Product_DeleteNotExistProduct_ReturnBadRequest(string name, string password)
     {
         // arrange
         _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
         // act
         var response = await _client.DeleteAsync($"{_productEndpoint}/{Guid.NewGuid()}");
         // assert
-        response.StatusCode.Should().Be((HttpStatusCode)httpStatusCode);
+        response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status400BadRequest);
+    }
+    
+    [TestCase("Admin", "Admin")]
+    [TestCase("SuperAdmin", "SuperAdmin")]
+    [TestCase("User", "User")]
+    public async Task Product_GetProductsWithToken_ReturnSuccess(string name, string password)
+    {
+        // arrange
+        _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
+        // act
+        var response = await _client.GetAsync(_productEndpoint);
+        // assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<GetProductResponse>>>();
+        result.Data.Should().HaveCountGreaterThan(0);
+    }
+
+    [Test]
+    public async Task Product_GetProductsWithoutToken_ReturnFail()
+    {
+        // arrange
+        _client = TestSetup.Factory.CreateClient();
+        // act
+        var response = await _client.GetAsync(_productEndpoint);
+        // assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+
+    [TestCase("Admin", "Admin")]
+    [TestCase ("SuperAdmin", "SuperAdmin")]
+    [TestCase("User", "User")]
+    public async Task Product_GetProduct_WithToken_ReturnSuccess(string name, string password)
+    {
+        // arrange
+        _client = await TestSetup.GenerateClientWithTokenAsync(name, password);
+        // act
+        var response = await _client.GetAsync($"{_productEndpoint}/{TestSetup.ExistProductId1}");
+        // assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<ApiResponse<GetProductResponse>>();
+        result.Data.Should().NotBeNull();
+    }
+    
+    
+    [Test]
+    public async Task Product_GetProduct_WithoutToken_ReturnFail()
+    {
+        // arrange
+        _client = TestSetup.Factory.CreateClient();
+        // act
+        var response = await _client.GetAsync($"{_productEndpoint}/{TestSetup.ExistProductId1}");
+        // assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }
    

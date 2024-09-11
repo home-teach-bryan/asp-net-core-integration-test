@@ -38,12 +38,13 @@ public class OrderController : ControllerBase
             return BadRequest(new ApiResponse<object>(ApiResponseStatus.UserNotFound));
         }
         var isSuccess = _orderService.AddOrder(addOrderRequest, Guid.Parse(userId.Value));
+        var status = isSuccess ? ApiResponseStatus.Success : ApiResponseStatus.AddOrderFail;
         if (!isSuccess)
         {
-            return BadRequest(new ApiResponse<object>(ApiResponseStatus.AddOrderFail));
+            return BadRequest(new ApiResponse<object>(status));
         }
 
-        return Ok(isSuccess);
+        return Ok(new ApiResponse<object>(status));
 
     }
 
@@ -52,7 +53,7 @@ public class OrderController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    [Route("/OrderDetails")]
+    [Route("OrderDetails")]
     [Authorize(Roles = "User")]
     public IActionResult GetOrderDetails()
     {
@@ -67,4 +68,6 @@ public class OrderController : ControllerBase
             Data = orderDetails
         });
     }
+    
+    
 }
