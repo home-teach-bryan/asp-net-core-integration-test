@@ -17,7 +17,6 @@ public class Program
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
 
         builder.Services.AddCustomSwaggerGen();
         builder.Services.AddScoped<IProductService, ProductService>();
@@ -30,7 +29,7 @@ public class Program
         
         builder.Services.AddDbContext<ProductDbContext>(options =>
         {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("EFCoreSampleConnectionString"));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("ProductConnectionString"));
         });
 
         var app = builder.Build();
