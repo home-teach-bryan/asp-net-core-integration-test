@@ -1,17 +1,27 @@
-﻿using AspNetCoreIntegration.Models.Enum;
+﻿using System.Text.Json.Serialization;
+using AspNetCoreIntegration.Models.Enum;
 using AspNetCoreIntegrationTest.Extension;
 
 namespace AspNetCoreIntegrationTest.Models.Response;
 
 public class ApiResponse<T>
 {
-    public ApiResponseStatus Status { get; private set; }
+    [JsonPropertyName("status")]
+    public ApiResponseStatus Status { get; set; }
     
-    public string Message { get; private set; }
+    [JsonPropertyName("message")]
+    public string Message { get; set; }
     
+    [JsonPropertyName("errors")]
     public List<string>? Errors { get; set; }
     
+    [JsonPropertyName("data")]
     public T? Data { get; set; }
+
+    public ApiResponse()
+    {
+        
+    }
     
     public ApiResponse(ApiResponseStatus status)
     {
